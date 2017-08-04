@@ -1,8 +1,28 @@
 package com.dounine.fastdoc.core
 
-class FastDocImpl : FastDoc {
+object FastDocImpl : FastDoc {
+
+    private lateinit var applicationName:String
+    private lateinit var groupName:String
+
     override fun doRequest(): FastRequest {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return FastRequestImpl()
+    }
+
+    fun setAppName(name:String){
+        this.applicationName = name
+    }
+
+    fun setGroupName(name:String){
+        this.groupName = name
+    }
+
+    fun getAppName():String{
+        return applicationName
+    }
+
+    fun getGroupName():String{
+        return groupName
     }
 
 }
