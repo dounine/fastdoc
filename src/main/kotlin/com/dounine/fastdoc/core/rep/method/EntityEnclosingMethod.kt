@@ -12,7 +12,7 @@ import kotlin.collections.ArrayList
 
 open class EntityEnclosingMethod(request: FastRequest,method: FastRequestMethod) : BaseMethodImpl(request,method), IEntityEnclosingMethod {
 
-    private var data:List<Data> = ArrayList()
+    protected var data:List<Data> = ArrayList()
 
     override fun addData(vararg _datas: Data):IEntityEnclosingMethod {
         if(_datas.size>0){

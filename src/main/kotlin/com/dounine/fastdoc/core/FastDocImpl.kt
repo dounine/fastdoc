@@ -6,6 +6,7 @@ object FastDocImpl : FastDoc {
     private lateinit var applicationName:String
     private lateinit var groupName:String
     private lateinit var prefixUrl:String
+    private var timeout:Int = 10*1000
 
     override fun doRequest(): FastRequest {
         return FastRequestImpl()
@@ -33,6 +34,14 @@ object FastDocImpl : FastDoc {
 
     fun getPrefixUrl() :String{
         return this.prefixUrl
+    }
+
+    fun setTimeout(timeout: Int) {
+        this.timeout = timeout
+    }
+
+    fun getTimeout() :Int{
+        return this.timeout
     }
 
 }

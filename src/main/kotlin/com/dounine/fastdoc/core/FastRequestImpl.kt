@@ -13,6 +13,7 @@ import org.apache.http.client.methods.*
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
+import java.io.File
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -20,6 +21,7 @@ import kotlin.collections.ArrayList
 
 
 class FastRequestImpl : FastRequest {
+
 
 
     private var prefixUrl: String? = null
@@ -31,6 +33,8 @@ class FastRequestImpl : FastRequest {
 
     companion object {
         val COOKIE_REQUEST_CONFIG = RequestConfig.custom()
+                .setSocketTimeout(FastDocImpl.getTimeout())
+                .setConnectTimeout(FastDocImpl.getTimeout())
                 .setCookieSpec(CookieSpecs.STANDARD_STRICT)
                 .build()
         val VAL_PATTERN: Pattern = Pattern.compile("[{][a-zA-Z0-9_$]+[}]")
@@ -148,6 +152,12 @@ class FastRequestImpl : FastRequest {
 
     override fun POST(): IPostMethod {
         var method = PostMethod(this)
+        this.baseMethod = method
+        return method
+    }
+
+    override fun FILE(): IFileMethod {
+        var method = FileMethod(this)
         this.baseMethod = method
         return method
     }

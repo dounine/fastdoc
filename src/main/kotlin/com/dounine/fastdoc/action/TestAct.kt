@@ -40,12 +40,14 @@ class TestAct {
         return ActResult(name)
     }
 
-    @PostMapping("result/file/{username}")
-    fun usernamePost(@PathVariable username: String,@RequestParam("files") multiFile:MultipartFile): Result<String> {
+    @PostMapping("result/file")
+    fun usernamePost(username:String,@RequestParam("files") multiFile:Array<MultipartFile>): Result<String> {
         if (!multiFile.isEmpty()) {
-            FileUtils.copyInputStreamToFile(multiFile.inputStream,File("/home/lake/github/fastdoc/build/"+multiFile.originalFilename))
+            for(mf in multiFile){
+                FileUtils.copyInputStreamToFile(mf.inputStream,File("/home/lake/github/fastdoc/build/"+mf.originalFilename))
+            }
         }
-        return ActResult("success")
+        return ActResult(username)
     }
 
     @PutMapping("result/put/{username}")

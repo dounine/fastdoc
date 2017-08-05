@@ -22,6 +22,8 @@ interface FastRequest {
 
     fun POST():IPostMethod
 
+    fun FILE():IFileMethod
+
     fun PATCH():IPatchMethod
 
     fun PUT():IPutMethod
