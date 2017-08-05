@@ -30,7 +30,7 @@ class RestDocImpl : RestDoc {
         println("url请求 "+request.getUrl())
         println("参数 "+JSON.toJSONString(subsections))
         println("Example http request")
-        println(request.getMethod().name+" "+request.getReplaceUrl())
+        println(request.getMethodVars().method.name+" "+request.getReplaceUrl())
         println("Host: "+request.getPrefixUrl())
         println("Example response")
         println(response.getResponse().statusLine)
@@ -52,7 +52,7 @@ class RestDocImpl : RestDoc {
         listItem.setName(name)
 
         var pmRequest:RequestImpl = RequestImpl()
-        var url:URL = URL(request.getPrefixUrl()+request.getReplaceUrl())
+        var url:URL = URL(request.getMethodVars().url)
         if(null!=url.query){
             var params:List<NameValuePair> = URLEncodedUtils.parse(url.query,StandardCharsets.UTF_8)
             var querys:ArrayList<QueryImpl> = ArrayList(params.size)
@@ -70,11 +70,11 @@ class RestDocImpl : RestDoc {
         }else{
             pmRequest.setUrl(url.toString())
         }
-        pmRequest.setMethod(response.getRequest().getMethod())
+        pmRequest.setMethod(response.getRequest().getMethodVars().method)
 
-        if(request.getMethod().equals(FastRequestMethod.POST)||
-                request.getMethod().equals(FastRequestMethod.PUT)||
-                request.getMethod().equals(FastRequestMethod.PATCH)){
+        if(request.getMethodVars().method.equals(FastRequestMethod.POST)||
+                request.getMethodVars().method.equals(FastRequestMethod.PUT)||
+                request.getMethodVars().method.equals(FastRequestMethod.PATCH)){
             var pmBody:BodyImpl = BodyImpl()
             pmBody.setMode(BodyMode.formdata)
             var formdatas:ArrayList<FormData> = pmBody.getFormdata() as ArrayList<FormData>

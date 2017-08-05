@@ -8,7 +8,7 @@ interface FastRequest {
 
     fun prefixUrl(url:String):FastRequest
 
-    fun getPrefixUrl():String
+    fun getPrefixUrl():String?
 
     fun getReplaceUrl():String
 
@@ -30,7 +30,7 @@ interface FastRequest {
 
     fun OPTIONS():IOptionsMethod
 
-    fun getMethod():FastRequestMethod
+    fun getMethodVars():MethodVars
 
     fun headers(argv: Array<Header>): FastRequest
 

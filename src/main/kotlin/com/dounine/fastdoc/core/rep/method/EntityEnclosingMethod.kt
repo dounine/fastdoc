@@ -14,10 +14,10 @@ open class EntityEnclosingMethod(request: FastRequest,method: FastRequestMethod)
 
     private var data:List<Data> = ArrayList()
 
-    override fun addData(vararg datas: Data):IEntityEnclosingMethod {
-        if(datas.size>0){
+    override fun addData(vararg _datas: Data):IEntityEnclosingMethod {
+        if(_datas.size>0){
             var ds:ArrayList<Data> = ArrayList(data)
-            for(d in datas){
+            for(d in _datas){
                 ds.add(d)
             }
             data = ds
@@ -27,28 +27,35 @@ open class EntityEnclosingMethod(request: FastRequest,method: FastRequestMethod)
 
     override fun doResponse():FastResponse {
         var urlPath = this.request.getPrefixUrl() + this.request.getReplaceUrl()
-        var postPutRequest: HttpEntityEnclosingRequestBase
+        url = fillParameter(urlPath)
+
+        var httpRequest: HttpEntityEnclosingRequestBase
         if(this.method.equals(FastRequestMethod.POST)){
-            postPutRequest = HttpPost(urlPath)
+            httpRequest = HttpPost(url)
         }else if(this.method.equals(FastRequestMethod.PUT)){
-            postPutRequest = HttpPut(urlPath)
+            httpRequest = HttpPut(url)
         }else{
-            postPutRequest = HttpPatch(urlPath)
+            httpRequest = HttpPatch(url)
         }
         if (data.size > 0) {
             val params: ArrayList<BasicNameValuePair> = ArrayList(data.size)
             for (pd in data) {
                 params.add(BasicNameValuePair(pd.name, pd.value.toString()))
             }
-            postPutRequest.entity = UrlEncodedFormEntity(params)
+            httpRequest.entity = UrlEncodedFormEntity(params)
         }
-        var response:HttpResponse = FastRequestImpl.HTTP_CLIENT.execute(postPutRequest)
+
+        fillHeader(httpRequest)
+        fillCookie(this.httpContext)
+
+        var response:HttpResponse = FastRequestImpl.HTTP_CLIENT.execute(httpRequest,httpContext)
 
         var entity: HttpEntity = response.entity
 
         var body: String = EntityUtils.toString(entity)
         var status: Int = response.statusLine.statusCode
         var length: Long = response.entity.contentLength
+
         return FastResponseImpl(body, status, length, response, this.request)
 
     }

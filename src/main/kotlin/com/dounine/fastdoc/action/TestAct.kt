@@ -1,6 +1,9 @@
 package com.dounine.fastdoc.action
 
+import org.apache.commons.io.FileUtils
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import java.io.File
 
 @RestController
 class TestAct {
@@ -23,6 +26,26 @@ class TestAct {
     @PostMapping("result/post/{username}")
     fun usernamePost(@PathVariable username: String,role:String,age:Int): Result<String> {
         return ActResult(role+age)
+    }
+
+    @GetMapping("result/get/cookie")
+    fun usernamePost(@CookieValue name:String): Result<String> {
+
+        return ActResult(name)
+    }
+
+    @GetMapping("result/get/header")
+    fun usernameHeader(@RequestHeader name:String): Result<String> {
+
+        return ActResult(name)
+    }
+
+    @PostMapping("result/file/{username}")
+    fun usernamePost(@PathVariable username: String,@RequestParam("files") multiFile:MultipartFile): Result<String> {
+        if (!multiFile.isEmpty()) {
+            FileUtils.copyInputStreamToFile(multiFile.inputStream,File("/home/lake/github/fastdoc/build/"+multiFile.originalFilename))
+        }
+        return ActResult("success")
     }
 
     @PutMapping("result/put/{username}")

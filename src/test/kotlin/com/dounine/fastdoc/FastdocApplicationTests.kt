@@ -6,7 +6,10 @@ import com.dounine.fastdoc.core.*
 import com.dounine.fastdoc.core.doc.LinkCallback
 import com.dounine.fastdoc.core.doc.LinkData
 import com.dounine.fastdoc.core.rep.*
+import com.dounine.fastdoc.core.rep.method.Cookie
 import com.dounine.fastdoc.core.rep.method.Data
+import com.dounine.fastdoc.core.rep.method.Header
+import com.dounine.fastdoc.core.rep.method.Parameter
 import com.dounine.fastdoc.core.req.PostDataImpl
 import org.apache.http.HttpResponse
 import org.apache.http.client.HttpClient
@@ -55,13 +58,14 @@ class FastdocApplicationTests {
 	fun init(){
 		fastDoc.setAppName("用户模块测试")
 		fastDoc.setGroupName("用户功能测试")
+		fastDoc.setPrefixUrl("http://localhost:8080")
 	}
 
 	@Test
 	fun testGetMethod() {
 		fastDoc.doRequest()
 				.prefixUrl("http://localhost:8080")
-				.url("/result/{username}?u=1&cc=1234","lake")
+				.url("/result/{username}?u=1&cc=1234",Arrays.asList(UrlParameter("username",123)))
 				.GET()
 				.doResponse()
 				.status(object : StatusCallback{
@@ -197,6 +201,57 @@ class FastdocApplicationTests {
 				.body(object : BodyCallback{
 					override fun result(): String {
 						return "{\"code\":0,\"msg\":\"\",\"data\":\"success\"}"
+					}
+				})
+				.restDoc()
+				.name("查询列表")
+				.subsectionPath(SubsectionPathImpl().pathName("username").description("用户"))
+				.subsectionPath(SubsectionPathImpl())
+				.create()
+	}
+
+	@Test
+	fun testCookieMethod() {
+		fastDoc.doRequest()
+				.prefixUrl("http://localhost:8080")
+				.url("/result/get/cookie")
+				.GET()
+				.addCookie(Cookie("name","lake"))
+				.doResponse()
+				.status(object : StatusCallback{
+					override fun result(): Int {
+						return 200
+					}
+				})
+				.body(object : BodyCallback{
+					override fun result(): String {
+						return "{\"code\":0,\"msg\":\"\",\"data\":\"lake\"}"
+					}
+				})
+				.restDoc()
+				.name("查询列表")
+				.subsectionPath(SubsectionPathImpl().pathName("username").description("用户"))
+				.subsectionPath(SubsectionPathImpl())
+				.create()
+	}
+
+	@Test
+	fun testHeaderMethod() {
+		fastDoc.doRequest()
+				.url("/result/get/header")
+				.GET()
+				.addParameter(Parameter("name","cc"))
+				.addParameter(Parameter("name1","cc"))
+				.addHeader(Header("name","lake"))
+				.doResponse()
+				.status(object : StatusCallback{
+					override fun result(): Int {
+						return 200
+					}
+				})
+				.body(object : BodyCallback{
+					override fun result(): String {
+						return "{\"code\":0,\"msg\":\"\",\"data\":\"lake\"}"
 					}
 				})
 				.restDoc()

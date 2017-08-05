@@ -6,6 +6,8 @@ import com.dounine.fastdoc.core.req.PostData
 import org.apache.http.HttpEntity
 import org.apache.http.HttpResponse
 import org.apache.http.client.HttpClient
+import org.apache.http.client.config.CookieSpecs
+import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.*
 import org.apache.http.impl.client.HttpClients
@@ -20,16 +22,21 @@ import kotlin.collections.ArrayList
 class FastRequestImpl : FastRequest {
 
 
-    private lateinit var prefixUrl: String
+    private var prefixUrl: String? = null
     private lateinit var url: String
     private lateinit var replaceUrl: String
     private lateinit var headers: Array<Header>
     private var data: List<PostData> = ArrayList()
-    private lateinit var method:FastRequestMethod
+    private lateinit var baseMethod:BaseMethod
 
     companion object {
-        val VAL_PATTERN: Pattern = Pattern.compile("[{][a-zA-Z0-9_]+[}]")
-        val HTTP_CLIENT: HttpClient = HttpClients.createDefault()
+        val COOKIE_REQUEST_CONFIG = RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.STANDARD_STRICT)
+                .build()
+        val VAL_PATTERN: Pattern = Pattern.compile("[{][a-zA-Z0-9_$]+[}]")
+        val HTTP_CLIENT: HttpClient = HttpClients.custom()
+                .setDefaultRequestConfig(COOKIE_REQUEST_CONFIG)
+                .build()
     }
 
     override fun prefixUrl(url: String): FastRequest {
@@ -74,7 +81,7 @@ class FastRequestImpl : FastRequest {
             for (i in 0..listSize - 1) {
                 var ov: Optional<UrlParameter> = args.stream().filter({ a -> "{${a.name}}".equals(listStr.get(i)) }).findFirst()
                 if (ov.isPresent) {
-                    this.replaceUrl = this.replaceUrl.replace(listStr.get(i), ov.get().value)
+                    this.replaceUrl = this.replaceUrl.replace(listStr.get(i), ov.get().value.toString())
                     matchCount++
                 }
             }
@@ -114,7 +121,10 @@ class FastRequestImpl : FastRequest {
         return this
     }
 
-    override fun getPrefixUrl(): String {
+    override fun getPrefixUrl(): String? {
+        if(this.prefixUrl==null){
+            return FastDocImpl.getPrefixUrl()
+        }
         return this.prefixUrl
     }
 
@@ -132,39 +142,39 @@ class FastRequestImpl : FastRequest {
 
     override fun GET(): IGetMethod {
         var method = GetMethod(this)
-        this.method = method.method
+        this.baseMethod = method
         return method
     }
 
     override fun POST(): IPostMethod {
         var method = PostMethod(this)
-        this.method = method.method
+        this.baseMethod = method
         return method
     }
 
     override fun PATCH(): IPatchMethod {
         var method = PatchMethod(this)
-        this.method = method.method
+        this.baseMethod = method
         return method
     }
 
     override fun PUT(): IPutMethod {
         var method = PutMethod(this)
-        this.method = method.method
+        this.baseMethod = method
         return method
     }
 
     override fun DELETE(): IDeleteMethod {
         var method = DeleteMethod(this)
-        this.method = method.method
+        this.baseMethod = method
         return method
     }
 
     override fun OPTIONS(): IOptionsMethod {
         var method = OptionsMethod(this)
-        this.method = method.method
+        this.baseMethod = method
         return method
     }
 
-    override fun getMethod(): FastRequestMethod = this.method
+    override fun getMethodVars(): MethodVars = this.baseMethod.methodVars()
 }

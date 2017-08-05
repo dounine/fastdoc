@@ -2,8 +2,8 @@ package com.dounine.fastdoc.core.req
 
 class PostDataImpl : PostData {
 
-    private lateinit var name:String
-    private lateinit var value:Any
+    private var name:String
+    private var value:Any
 
     constructor(name:String,value:Any){
         this.name = name
