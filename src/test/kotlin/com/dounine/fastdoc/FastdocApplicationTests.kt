@@ -6,12 +6,14 @@ import com.dounine.fastdoc.core.*
 import com.dounine.fastdoc.core.doc.LinkCallback
 import com.dounine.fastdoc.core.doc.LinkData
 import com.dounine.fastdoc.core.rep.*
+import com.dounine.fastdoc.core.rep.method.Data
 import com.dounine.fastdoc.core.req.PostDataImpl
 import org.apache.http.HttpResponse
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import org.hibernate.validator.internal.util.privilegedactions.GetMethod
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -57,11 +59,10 @@ class FastdocApplicationTests {
 
 	@Test
 	fun testGetMethod() {
-		println(localServerPort)
 		fastDoc.doRequest()
 				.prefixUrl("http://localhost:8080")
 				.url("/result/{username}?u=1&cc=1234","lake")
-				.method(FastRequestMethod.GET)
+				.GET()
 				.doResponse()
 				.status(object : StatusCallback{
 					override fun result(): Int {
@@ -85,9 +86,9 @@ class FastdocApplicationTests {
 		fastDoc.doRequest()
 				.prefixUrl("http://localhost:8080")
 				.url("/result/post/{username}?u=1&cc=1234","lake")
-				.method(FastRequestMethod.POST)
-				.data(Arrays.asList(PostDataImpl("age",22)))
-				.dataPush(PostDataImpl("role","admin"))
+				.POST()
+				.addData(Data("age",22))
+				.addData(Data("role","admin"))
 				.doResponse()
 				.status(object : StatusCallback{
 					override fun result(): Int {
@@ -97,6 +98,105 @@ class FastdocApplicationTests {
 				.body(object : BodyCallback{
 					override fun result(): String {
 						return "{\"code\":0,\"msg\":\"\",\"data\":\"admin22\"}"
+					}
+				})
+				.restDoc()
+				.name("查询列表")
+				.subsectionPath(SubsectionPathImpl().pathName("username").description("用户"))
+				.subsectionPath(SubsectionPathImpl())
+				.create()
+	}
+
+	@Test
+	fun testPutMethod() {
+		fastDoc.doRequest()
+				.prefixUrl("http://localhost:8080")
+				.url("/result/put/{username}?u=1&cc=1234","lake")
+				.PUT()
+				.addData(Data("age",22),Data("role","admin"))
+				.doResponse()
+				.status(object : StatusCallback{
+					override fun result(): Int {
+						return 200
+					}
+				})
+				.body(object : BodyCallback{
+					override fun result(): String {
+						return "{\"code\":0,\"msg\":\"\",\"data\":\"admin22\"}"
+					}
+				})
+				.restDoc()
+				.name("查询列表")
+				.subsectionPath(SubsectionPathImpl().pathName("username").description("用户"))
+				.subsectionPath(SubsectionPathImpl())
+				.create()
+	}
+
+	@Test
+	fun testPatchMethod() {
+		fastDoc.doRequest()
+				.prefixUrl("http://localhost:8080")
+				.url("/result/patch/{username}?u=1&cc=1234","lake")
+				.PATCH()
+				.addData(Data("age",22))
+				.addData(Data("role","admin"))
+				.doResponse()
+				.status(object : StatusCallback{
+					override fun result(): Int {
+						return 200
+					}
+				})
+				.body(object : BodyCallback{
+					override fun result(): String {
+						return "{\"code\":0,\"msg\":\"\",\"data\":\"admin22\"}"
+					}
+				})
+				.restDoc()
+				.name("查询列表")
+				.subsectionPath(SubsectionPathImpl().pathName("username").description("用户"))
+				.subsectionPath(SubsectionPathImpl())
+				.create()
+	}
+
+	@Test
+	fun testDeleteMethod() {
+		fastDoc.doRequest()
+				.prefixUrl("http://localhost:8080")
+				.url("/result/delete/{username}?u=1&cc=1234","lake")
+				.DELETE()
+				.doResponse()
+				.status(object : StatusCallback{
+					override fun result(): Int {
+						return 200
+					}
+				})
+				.body(object : BodyCallback{
+					override fun result(): String {
+						return "{\"code\":0,\"msg\":\"\",\"data\":\"success\"}"
+					}
+				})
+				.restDoc()
+				.name("查询列表")
+				.subsectionPath(SubsectionPathImpl().pathName("username").description("用户"))
+				.subsectionPath(SubsectionPathImpl())
+				.create()
+	}
+
+	@Test
+	fun testOptionsMethod() {
+		fastDoc.doRequest()
+				.prefixUrl("http://localhost:8080")
+				.url("/result/options/{username}?u=1&cc=1234","lake")
+				.OPTIONS()
+				.doResponse()
+				.status(object : StatusCallback{
+					override fun result(): Int {
+						return 200
+					}
+				})
+				.body(object : BodyCallback{
+					override fun result(): String {
+						return "{\"code\":0,\"msg\":\"\",\"data\":\"success\"}"
 					}
 				})
 				.restDoc()

@@ -72,7 +72,9 @@ class RestDocImpl : RestDoc {
         }
         pmRequest.setMethod(response.getRequest().getMethod())
 
-        if(response.getRequest().getMethod().equals(FastRequestMethod.POST)){
+        if(request.getMethod().equals(FastRequestMethod.POST)||
+                request.getMethod().equals(FastRequestMethod.PUT)||
+                request.getMethod().equals(FastRequestMethod.PATCH)){
             var pmBody:BodyImpl = BodyImpl()
             pmBody.setMode(BodyMode.formdata)
             var formdatas:ArrayList<FormData> = pmBody.getFormdata() as ArrayList<FormData>

@@ -1,6 +1,7 @@
 package com.dounine.fastdoc.core
 
 import com.dounine.fastdoc.core.postman.Header
+import com.dounine.fastdoc.core.rep.method.*
 import com.dounine.fastdoc.core.req.PostData
 import org.apache.http.HttpEntity
 import org.apache.http.HttpResponse
@@ -22,9 +23,9 @@ class FastRequestImpl : FastRequest {
     private lateinit var prefixUrl: String
     private lateinit var url: String
     private lateinit var replaceUrl: String
-    private lateinit var method: FastRequestMethod
     private lateinit var headers: Array<Header>
     private var data: List<PostData> = ArrayList()
+    private lateinit var method:FastRequestMethod
 
     companion object {
         val VAL_PATTERN: Pattern = Pattern.compile("[{][a-zA-Z0-9_]+[}]")
@@ -50,44 +51,6 @@ class FastRequestImpl : FastRequest {
     override fun data(data: List<PostData>): FastRequest {
         this.data = data
         return this
-    }
-
-    override fun doResponse(): FastResponse {
-        var request: HttpUriRequest? = null;
-        var urlPath = this.prefixUrl + this.replaceUrl;
-        if (method.equals(FastRequestMethod.GET)) {
-            request = HttpGet(urlPath)
-        } else if (method.equals(FastRequestMethod.PUT)) {
-            request = HttpPut(urlPath)
-        } else if (method.equals(FastRequestMethod.DELETE)) {
-            request = HttpDelete(urlPath)
-        } else if (method.equals(FastRequestMethod.PATCH)) {
-            request = HttpPatch(urlPath)
-        } else if (method.equals(FastRequestMethod.OPTIONS)) {
-            request = HttpOptions(urlPath)
-        }
-
-        var response: HttpResponse? = null;
-
-        if (method.equals(FastRequestMethod.POST) && data.size > 0) {
-            val params: ArrayList<BasicNameValuePair> = ArrayList()
-            for (pd in data) {
-                params.add(BasicNameValuePair(pd.getName(), pd.getValue().toString()))
-            }
-            var postRequest: HttpPost = HttpPost(urlPath)
-            postRequest.entity = UrlEncodedFormEntity(params)
-            response = HTTP_CLIENT.execute(postRequest)
-        } else {
-            response = HTTP_CLIENT.execute(request)
-        }
-
-        var entity: HttpEntity = response.entity
-
-        var body: String = EntityUtils.toString(entity)
-        var status: Int = response.statusLine.statusCode
-        var length: Long = response.entity.contentLength
-        var fastResponse: FastResponseImpl = FastResponseImpl(body, status, length, response, this)
-        return fastResponse
     }
 
     override fun url(url: String, args: List<UrlParameter>): FastRequest {
@@ -146,11 +109,6 @@ class FastRequestImpl : FastRequest {
         return this
     }
 
-    override fun method(method: FastRequestMethod): FastRequest {
-        this.method = method
-        return this
-    }
-
     override fun headers(argv: Array<Header>): FastRequest {
         this.headers = argv
         return this
@@ -164,15 +122,49 @@ class FastRequestImpl : FastRequest {
         return this.url
     }
 
-    fun getReplaceUrl(): String {
+    override fun getReplaceUrl(): String {
         return this.replaceUrl
-    }
-
-    override fun getMethod(): FastRequestMethod {
-        return this.method
     }
 
     override fun getHeaders(): Array<Header> {
         return this.headers
     }
+
+    override fun GET(): IGetMethod {
+        var method = GetMethod(this)
+        this.method = method.method
+        return method
+    }
+
+    override fun POST(): IPostMethod {
+        var method = PostMethod(this)
+        this.method = method.method
+        return method
+    }
+
+    override fun PATCH(): IPatchMethod {
+        var method = PatchMethod(this)
+        this.method = method.method
+        return method
+    }
+
+    override fun PUT(): IPutMethod {
+        var method = PutMethod(this)
+        this.method = method.method
+        return method
+    }
+
+    override fun DELETE(): IDeleteMethod {
+        var method = DeleteMethod(this)
+        this.method = method.method
+        return method
+    }
+
+    override fun OPTIONS(): IOptionsMethod {
+        var method = OptionsMethod(this)
+        this.method = method.method
+        return method
+    }
+
+    override fun getMethod(): FastRequestMethod = this.method
 }
