@@ -66,8 +66,14 @@ class FastResponseImpl : FastResponse {
 
     fun expressStr(expressions:List<Expr>,responseStr:String,parentJsonFields:StringBuilder):String{
         var expr:Expr = expressions.get(0)
+        if(""==responseStr){
+            throw FastDocException("JsonField [ ${parentJsonFields.toString()}.${expr.value} ]键不存在")
+        }
         if(expr.type.equals(JFType.ARRAY)){
             var jo:JSONObject = JSONObject.parseObject(responseStr)
+            if(!jo.containsKey(expr.value.toString())){
+                throw FastDocException("JsonField [ ${parentJsonFields.toString()} ]键不存在")
+            }
             var jos = JSONObject.parseArray(jo.getString(expr.value.toString()))
             var exprs:List<Expr> = expressions.subList(1,expressions.size)
             var exprStr:String = jos.toString()
@@ -83,9 +89,19 @@ class FastResponseImpl : FastResponse {
         }else if(expr.type.equals(JFType.ARRAY_SIZE)){
             var jos = JSONObject.parseArray(responseStr)
             return jos.size.toString()
+        }else if(expr.type.equals(JFType.STR_LENGTH)){
+            var jos = JSONObject.parseObject(responseStr)
+            if(!jos.containsKey(expr.value.toString())){
+                throw FastDocException("JsonField [ ${parentJsonFields.toString()} ]键不存在")
+            }
+            return jos.get(expr.value).toString().length.toString()
         }else if(expr.type.equals(JFType.ARRAY_GET)){
             var jos:JSONArray = JSONObject.parseArray(responseStr)
-            var exprStr:String = jos.get(0).toString()
+            var getIndex:Int = Integer.parseInt(expr.value.toString())
+            if(getIndex>jos.size-1){
+                throw FastDocException("JsonField jfArray数组越界,期望${getIndex},实际${jos.size-1}")
+            }
+            var exprStr:String = jos.get(getIndex).toString()
             var exprs:List<Expr> = expressions.subList(1,expressions.size)
             if(exprs.size>0){
                 parentJsonFields.append("[")
@@ -97,6 +113,9 @@ class FastResponseImpl : FastResponse {
             }
         }else if(expr.type.equals(JFType.OBJECT)){
             var jo:JSONObject = JSONObject.parseObject(responseStr)
+            if(!jo.containsKey(expr.value.toString())){
+                throw FastDocException("JsonField [ ${parentJsonFields.toString()} ]键不存在")
+            }
             var exprStr:String = jo.getString(expr.value.toString())
             var exprs:List<Expr> = expressions.subList(1,expressions.size)
             if(exprs.size>0){
@@ -127,7 +146,7 @@ class FastResponseImpl : FastResponse {
         if(expressions.size==1&&expressions.get(0).type.equals(JFType.NAME)){
             var jo:JSONObject = JSONObject.parseObject(this.body)
             exprStr = jo.getString(expressions.get(0).value.toString())
-        }else if(expressions.size>1){
+        }else if(expressions.size>0){
             var parentJsonFields:StringBuilder = StringBuilder()
             exprStr = expressStr(expressions,this.body,parentJsonFields)
         }

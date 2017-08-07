@@ -47,11 +47,16 @@ class JsonField {
         return this
     }
 
-    fun jsArraySize(size:Int):JsonField{
+    fun jfArraySize():JsonField{
         if(sb.size>0&&!sb.last().type.equals(JFType.ARRAY)){
             throw FastDocException("jsonField 请先选择jfArray")
         }
-        sb.add(Expr(JFType.ARRAY_SIZE,size))
+        sb.add(Expr(JFType.ARRAY_SIZE,-1))
+        return this
+    }
+
+    fun jfStrLength(name:String):JsonField{
+        sb.add(Expr(JFType.STR_LENGTH,name))
         return this
     }
 

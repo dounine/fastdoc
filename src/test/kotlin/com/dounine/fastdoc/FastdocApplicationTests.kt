@@ -4,6 +4,7 @@ import com.dounine.fastdoc.core.FastDocImpl
 import com.dounine.fastdoc.core.UrlParameter
 import com.dounine.fastdoc.core.rep.*
 import com.dounine.fastdoc.core.rep.json.JsonField
+import com.dounine.fastdoc.core.rep.json.JsonFieldUtils
 import com.dounine.fastdoc.core.rep.method.*
 import org.junit.Before
 import org.junit.Test
@@ -163,20 +164,12 @@ class FastdocApplicationTests {
                 })
                 .body(object : BodyCallback {
                     override fun result(): Any {
-                        return "广东"
-                    }
-
-                    override fun jsonField(): JsonField {
-                        return JsonField().jfObject("data").jfArray("cusers").jfArrayGet(1).jfName("address")
-                    }
-                })
-                .body(object : BodyCallback {
-                    override fun result(): Any {
                         return 10
                     }
 
                     override fun jsonField(): JsonField {
-                        return JsonField().jfObject("data").jfObject("cu").jfArray("ages").jfArrayGet(0)
+//                        return JsonField().jfObject("data").jfObject("cu").jfArray("ages").jfArrayGet(0)
+                        return JsonFieldUtils.converJsonField("msg.cc{length}")
                     }
                 })
                 .restDoc()
