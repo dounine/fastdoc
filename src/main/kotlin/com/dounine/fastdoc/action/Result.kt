@@ -2,11 +2,11 @@ package com.dounine.fastdoc.action
 
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
-interface Result<T> {
+interface Result {
 
     fun getCode():Int
 
-    fun getData():T
+    fun getData():Any
 
     fun getMsg():String
 

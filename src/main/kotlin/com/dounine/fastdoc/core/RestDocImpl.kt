@@ -34,7 +34,7 @@ class RestDocImpl : RestDoc {
         println("Host: "+request.getPrefixUrl())
         println("Example response")
         println(response.getResponse().statusLine)
-        println("Content-Type: "+JSON.toJSONString(response.getResponse().getFirstHeader("Content-Type").value))
+//        println("Content-Type: "+JSON.toJSONString(response.getResponse().getFirstHeader("Content-Type").value))
         println("Content-Length: "+response.getLength())
         println(response.getBody())
 

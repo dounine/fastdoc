@@ -2,9 +2,8 @@ package com.dounine.fastdoc
 
 import com.dounine.fastdoc.core.FastDocImpl
 import com.dounine.fastdoc.core.UrlParameter
-import com.dounine.fastdoc.core.rep.BodyCallback
-import com.dounine.fastdoc.core.rep.StatusCallback
-import com.dounine.fastdoc.core.rep.SubsectionPathImpl
+import com.dounine.fastdoc.core.rep.*
+import com.dounine.fastdoc.core.rep.json.JsonField
 import com.dounine.fastdoc.core.rep.method.*
 import org.junit.Before
 import org.junit.Test
@@ -58,7 +57,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"你vb\"}"
                     }
                 })
@@ -84,7 +83,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"admin22\"}"
                     }
                 })
@@ -111,7 +110,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"22\"}"
                     }
                 })
@@ -121,6 +120,33 @@ class FastdocApplicationTests {
                 .subsectionPath(SubsectionPathImpl())
                 .create()
     }
+
+    @Test
+    fun testGetFileMethod() {
+        fastDoc.doRequest()
+                .prefixUrl("http://localhost:8080")
+                .url("/result/build.gradle")
+                .FILE()
+                .download("/home/lake/github/fastdoc/build/files/")
+                .doResponse()
+                .status(object : StatusCallback {
+                    override fun result(): Int {
+                        return 200
+                    }
+                })
+                .length(object : LengthCallback{
+                    override fun result(): Long {
+                        return 1649
+                    }
+                })
+                .restDoc()
+                .name("查询列表")
+                .subsectionPath(SubsectionPathImpl().pathName("username").description("用户"))
+                .subsectionPath(SubsectionPathImpl())
+                .create()
+    }
+
+    
 
     @Test
     fun testPutMethod() {
@@ -136,8 +162,21 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
-                        return "{\"code\":0,\"msg\":\"\",\"data\":\"admin22\"}"
+                    override fun result(): Any {
+                        return "广东"
+                    }
+
+                    override fun jsonField(): JsonField {
+                        return JsonField().jfObject("data").jfArray("cusers").jfArrayGet(1).jfName("address")
+                    }
+                })
+                .body(object : BodyCallback {
+                    override fun result(): Any {
+                        return 10
+                    }
+
+                    override fun jsonField(): JsonField {
+                        return JsonField().jfObject("data").jfObject("cu").jfArray("ages").jfArrayGet(0)
                     }
                 })
                 .restDoc()
@@ -162,7 +201,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"admin22\"}"
                     }
                 })
@@ -186,7 +225,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"success\"}"
                     }
                 })
@@ -210,7 +249,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"success\"}"
                     }
                 })
@@ -235,7 +274,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"lake\"}"
                     }
                 })
@@ -261,7 +300,7 @@ class FastdocApplicationTests {
                     }
                 })
                 .body(object : BodyCallback {
-                    override fun result(): String {
+                    override fun result(): Any {
                         return "{\"code\":0,\"msg\":\"\",\"data\":\"lake\"}"
                     }
                 })

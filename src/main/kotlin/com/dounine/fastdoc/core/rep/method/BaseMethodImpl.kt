@@ -17,7 +17,6 @@ import java.net.URI
 
 open class BaseMethodImpl : BaseMethod {
 
-
     protected var parameters:List<Parameter> = ArrayList()
     protected var headers:List<Header> = ArrayList()
     protected var cookies:List<Cookie> = ArrayList()
@@ -36,9 +35,21 @@ open class BaseMethodImpl : BaseMethod {
         this.method = method
     }
 
+    override fun getOverMethod(): FastRequestMethod? {
+        return null
+    }
+
     override fun methodVars(): MethodVars {
-        return MethodVars(method = method,
-                url = url)
+        if(getOverMethod()==null){
+            return MethodVars(method = method,
+                    url = url)
+        }else{
+            var me:FastRequestMethod? = getOverMethod()
+            me?.let {
+                return MethodVars(method = me,url = url)
+            }
+            return MethodVars(method = method,url = url)
+        }
     }
 
     override fun addCookie(vararg cookies: Cookie) :BaseMethod{
@@ -52,10 +63,10 @@ open class BaseMethodImpl : BaseMethod {
         return this
     }
 
-    override fun addParameter(vararg _parameters: Parameter) :BaseMethod{
-        if(_parameters.size>0){
+    override fun addParameter(vararg parameters: Parameter) :BaseMethod{
+        if(parameters.size>0){
             var ds:ArrayList<Parameter> = ArrayList(this.parameters)
-            for(d in _parameters){
+            for(d in parameters){
                 ds.add(d)
             }
             this.parameters = ds
@@ -63,10 +74,10 @@ open class BaseMethodImpl : BaseMethod {
         return this
     }
 
-    override fun addHeader(vararg _headers: Header) :BaseMethod{
-        if(_headers.size>0){
+    override fun addHeader(vararg headers: Header) :BaseMethod{
+        if(headers.size>0){
             var ds:ArrayList<Header> = ArrayList(this.headers)
-            for(d in _headers){
+            for(d in headers){
                 ds.add(d)
             }
             this.headers = ds

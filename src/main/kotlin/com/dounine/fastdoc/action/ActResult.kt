@@ -1,25 +1,24 @@
 package com.dounine.fastdoc.action
 
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
-class ActResult<T> : Result<T> {
+class ActResult : Result {
 
     private var code:Int = 0
     private var msg:String
-    private var data:T
+    private var data:Any
 
-    constructor(code:Int,data:T,msg:String){
+    constructor(code:Int,data:Any,msg:String){
         this.code =code
         this.msg = msg
         this.data = data
     }
 
-    constructor(data:T,msg:String){
+    constructor(data:Any,msg:String){
         this.msg = msg
         this.data = data
     }
 
-    constructor(data:T){
+    constructor(data:Any){
         this.msg = ""
         this.data = data
     }
@@ -28,7 +27,7 @@ class ActResult<T> : Result<T> {
         return code
     }
 
-    override fun getData(): T {
+    override fun getData(): Any {
         return data
     }
 

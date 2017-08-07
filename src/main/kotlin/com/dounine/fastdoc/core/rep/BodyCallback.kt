@@ -1,7 +1,7 @@
 package com.dounine.fastdoc.core.rep
 
-interface BodyCallback {
+interface BodyCallback : BaseCallback{
 
-    fun result():String
+    fun result():Any
 
 }

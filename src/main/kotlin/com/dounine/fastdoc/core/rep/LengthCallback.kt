@@ -1,6 +1,6 @@
 package com.dounine.fastdoc.core.rep
 
-interface LengthCallback {
+interface LengthCallback  : BaseCallback{
 
     fun result():Long
 

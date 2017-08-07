@@ -14,10 +14,10 @@ open class EntityEnclosingMethod(request: FastRequest,method: FastRequestMethod)
 
     protected var data:List<Data> = ArrayList()
 
-    override fun addData(vararg _datas: Data):IEntityEnclosingMethod {
-        if(_datas.size>0){
+    override fun addData(vararg datas: Data):IEntityEnclosingMethod {
+        if(datas.size>0){
             var ds:ArrayList<Data> = ArrayList(data)
-            for(d in _datas){
+            for(d in datas){
                 ds.add(d)
             }
             data = ds

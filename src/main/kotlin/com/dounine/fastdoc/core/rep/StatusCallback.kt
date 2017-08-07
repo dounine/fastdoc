@@ -1,6 +1,6 @@
 package com.dounine.fastdoc.core.rep
 
-interface StatusCallback {
+interface StatusCallback  : BaseCallback{
 
     fun result():Int
 

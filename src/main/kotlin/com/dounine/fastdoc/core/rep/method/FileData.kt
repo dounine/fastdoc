@@ -5,16 +5,16 @@ import java.io.File
 class FileData {
     private var name:String
     private var file:File? = null
-    private var src:String? = null
+    private var url:String? = null
 
     constructor(name:String,file:File){
         this.name = name
         this.file =file
     }
 
-    constructor(name:String,src:String){
+    constructor(name:String,url:String){
         this.name = name
-        this.src = src
+        this.url = url
     }
 
     fun getName():String{
@@ -25,7 +25,7 @@ class FileData {
         return this.file
     }
 
-    fun getSrc():String?{
-        return this.src
+    fun getUrl():String?{
+        return this.url
     }
 }
