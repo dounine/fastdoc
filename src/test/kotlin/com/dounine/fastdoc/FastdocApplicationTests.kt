@@ -3,8 +3,6 @@ package com.dounine.fastdoc
 import com.dounine.fastdoc.core.FastDocImpl
 import com.dounine.fastdoc.core.UrlParameter
 import com.dounine.fastdoc.core.rep.*
-import com.dounine.fastdoc.core.rep.json.JsonField
-import com.dounine.fastdoc.core.rep.json.JsonFieldUtils
 import com.dounine.fastdoc.core.rep.method.*
 import org.junit.Before
 import org.junit.Test
@@ -167,9 +165,8 @@ class FastdocApplicationTests {
                         return 10
                     }
 
-                    override fun jsonField(): JsonField {
-//                        return JsonField().jfObject("data").jfObject("cu").jfArray("ages").jfArrayGet(0)
-                        return JsonFieldUtils.converJsonField("msg.cc{length}")
+                    override fun jsonExpress(): String {
+                        return "data.cu.ages{length}"
                     }
                 })
                 .restDoc()

@@ -2,27 +2,40 @@ package com.dounine.fastdoc.core.rep.json.express
 
 import com.alibaba.fastjson.JSONObject
 import com.dounine.fastdoc.core.FastDocException
+import java.util.*
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class ObjectExpressImpl : BaseExpress {
 
     companion object {
-        private val STRING_SINGLE_PATTERN: Pattern = Pattern.compile("^[a-zA-Z0-9\$_]+$")
+        private val STRING_SINGLE_PATTERN: List<Pattern> = Arrays.asList(Pattern.compile("^[a-zA-Z0-9\$_]+$"),
+                Pattern.compile("^[a-zA-Z0-9\$_]+[{]length[}]$"))
+        private var NUMBER_PATTERN:Pattern = Pattern.compile("(?=\\{\\d+\\})\\d+")
     }
 
     protected var name: String = ""
+    protected var queryLength:Boolean = false
+
+
 
     override fun name(): String {
         return name
     }
 
     override fun matcher(str: String): Boolean {
-        if (str.indexOf("{") != -1) {
-            name = str.substring(0, str.indexOf("{"))
-        } else {
-            name = str
+        if(STRING_SINGLE_PATTERN.stream().anyMatch({s -> s.matcher(str).find()})){
+            if(str.indexOf("{")!=-1){
+                name = str.substring(0, str.indexOf("{"))
+                if(str.endsWith("{length}")){
+                    this.queryLength = true
+                }
+            }else{
+                name = str
+            }
+            return true
         }
-        return STRING_SINGLE_PATTERN.matcher(str).find()
+        return false
     }
 
     override fun expressStr(responseStr: String, parentJsonFields: StringBuilder): String {
@@ -38,6 +51,9 @@ class ObjectExpressImpl : BaseExpress {
             parentJsonFields.append(".")
         }
         parentJsonFields.append(name)
+        if(queryLength){
+            return exprStr.length.toString()
+        }
         return exprStr
     }
 

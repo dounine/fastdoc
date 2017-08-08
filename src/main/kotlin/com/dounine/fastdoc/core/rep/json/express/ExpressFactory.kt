@@ -5,14 +5,7 @@ object ExpressFactory {
     fun all():List<BaseExpress>{
         var list:ArrayList<BaseExpress> = ArrayList()
         list.add(ObjectExpressImpl())
-        list.add(ObjectExpressImpl())
-        list.add(ObjectExpressImpl())
-        list.add(ObjectExpressImpl())
-        list.add(ObjectExpressImpl())
-        list.add(ObjectExpressImpl())
-        list.add(ObjectExpressImpl())
-        list.add(ObjectExpressImpl())
-
-        return all()
+        list.add(ArrayExpressImpl())
+        return list
     }
 }

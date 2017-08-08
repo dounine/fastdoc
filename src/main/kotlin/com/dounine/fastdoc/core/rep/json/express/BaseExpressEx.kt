@@ -1,30 +1,29 @@
 package com.dounine.fastdoc.core.rep.json.express
 
-import com.dounine.fastdoc.core.rep.json.Expr
+class BaseExpressEx {
 
-abstract class BaseExpressEx {
+    protected val jsonField:String
+    protected val list:List<BaseExpress> = ExpressFactory.all()
 
-    protected val elStr:String
-
-    constructor(elStr:String){
-        this.elStr = elStr
+    constructor(jsonField:String){
+        this.jsonField = jsonField
     }
 
 
-    fun expressStr(responseStr: String, parentJsonFields: StringBuilder): String {
-        var list:List<BaseExpress> = ExpressFactory.all()
-        var els: List<String> = elStr.split(".")
-        var tmpResponseStr:String = ""
+    fun expressStr(responseStr: String): String {
+        var els: List<String> = jsonField.split(".")
+        var tmpResponseStr:String = responseStr
+        var parentJsonFields:StringBuilder = StringBuilder()
         for(el in els){
             for(be in list){
                 if(be.matcher(el)){
-                    tmpResponseStr = be.expressStr(responseStr,parentJsonFields = parentJsonFields)
+                    tmpResponseStr = be.expressStr(tmpResponseStr,parentJsonFields = parentJsonFields)
                     break
                 }
             }
         }
 
-        return ""
+        return tmpResponseStr
     }
 
 

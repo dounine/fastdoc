@@ -1,7 +1,5 @@
 package com.dounine.fastdoc.core.rep.json.express
 
-import com.dounine.fastdoc.core.rep.json.Expr
-
 interface BaseExpress {
 
     fun name():String
